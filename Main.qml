@@ -49,149 +49,6 @@ Rectangle {
         fillMode: Image.PreserveAspectCrop
     }
 
-    // Set Background Video1
-    MediaPlayer {
-        id: mediaplayer1
-        autoPlay: true; muted: true
-        playlist: Playlist {
-            id: playlist1
-            playbackMode: Playlist.Random
-            onLoaded: { mediaplayer1.play() }
-        }
-    }
-
-    VideoOutput {
-        id: video1
-        fillMode: VideoOutput.PreserveAspectCrop
-        anchors.fill: parent; source: mediaplayer1
-        MouseArea {
-            id: mouseArea1
-            anchors.fill: parent;
-            //onPressed: {playlist1.shuffle(); playlist1.next();}
-            onPressed: {
-                fader1.state = fader1.state == "off" ? "on" : "off" ;
-                if (config.autofocusInput == "true") {
-                    if (username_input_box.text == "")
-                        username_input_box.focus = true
-                    else
-                        password_input_box.focus = true
-                }
-            }
-        }
-        Keys.onPressed: {
-            fader1.state = "on";
-            if (username_input_box.text == "")
-                username_input_box.focus = true
-            else
-                password_input_box.focus = true
-        }
-    }
-    WallpaperFader {
-        id: fader1
-        visible: true
-        anchors.fill: parent
-        state: "off"
-        source: video1
-        mainStack: login_container
-        footer: login_container
-    }
-
-    // Set Background Video2
-    MediaPlayer {
-        id: mediaplayer2
-        autoPlay: true; muted: true
-        playlist: Playlist {
-            id: playlist2; playbackMode: Playlist.Random
-            //onLoaded: { mediaplayer2.play() }
-        }
-    }
-
-    VideoOutput {
-        id: video2
-        fillMode: VideoOutput.PreserveAspectCrop
-        anchors.fill: parent; source: mediaplayer2
-        opacity: 0
-        MouseArea {
-            id: mouseArea2
-            enabled: false
-            anchors.fill: parent;
-            onPressed: {
-                fader1.state = fader1.state == "off" ? "on" : "off" ;
-                if (config.autofocusInput == "true") {
-                    if (username_input_box.text == "")
-                        username_input_box.focus = true
-                    else
-                        password_input_box.focus = true
-                }
-            }
-        }
-        Behavior on opacity {
-            enabled: true
-            NumberAnimation { easing.type: Easing.InOutQuad; duration: 3000 }
-        }
-        Keys.onPressed: {
-            fader2.state = "on";
-            if (username_input_box.text == "")
-                username_input_box.focus = true
-            else
-                password_input_box.focus = true
-        }
-    }
-
-    WallpaperFader {
-        id: fader2
-        visible: true
-        anchors.fill: parent
-        state: "off"
-        source: video2
-        mainStack: login_container
-        footer: login_container
-    }
-
-    property MediaPlayer currentPlayer: mediaplayer1
-
-    // Timer event to handle fade between videos
-    Timer {
-        interval: 1000;
-        running: true; repeat: true
-        onTriggered: {
-            if (currentPlayer.duration != -1 && currentPlayer.position > currentPlayer.duration - 10000) { // pre load the 2nd player
-                if (video2.opacity == 0) { // toogle opacity
-                    mediaplayer2.play()
-                } else
-                    mediaplayer1.play()
-            }
-            if (currentPlayer.duration != -1 && currentPlayer.position > currentPlayer.duration - 3000) { // initiate transition
-                if (video2.opacity == 0) { // toogle opacity
-                    mouseArea1.enabled = false
-                    currentPlayer = mediaplayer2
-                    video2.opacity = 1
-                    triggerTimer.start()
-                    mouseArea2.enabled = true
-                } else {
-                    mouseArea2.enabled = false
-                    currentPlayer = mediaplayer1
-                    video2.opacity = 0
-                    triggerTimer.start()
-                    mouseArea1.enabled = true
-                }
-            }
-        }
-    }
-
-    Timer { // this timer waits for fade to stop and stops the video
-        id: triggerTimer
-        interval: 4000; running: false; repeat: false
-        onTriggered: {
-            if (video2.opacity == 1)
-                mediaplayer1.stop()
-            else
-                mediaplayer2.stop()
-        }
-    }
-
-
-
     // Clock and Login Area
     Rectangle {
         id: rectangle
@@ -200,11 +57,13 @@ Rectangle {
 
         Clock {
             id: clock
-            y: parent.height * config.relativePositionY - clock.height / 2
-            x: parent.width * config.relativePositionX - clock.width / 2
-            color: "white"
+            y: parent.height * config.relativePositionY - clock.height / 1.8
+            x: parent.width * config.relativePositionX - clock.width / 0.39
+            color: "lightGray"
             timeFont.family: textFont.name
+						timeFont.pointSize: 24
             dateFont.family: textFont.name
+            dateFont.pointSize: 24 
         }
 
         Rectangle {
@@ -235,8 +94,8 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     font.family: textFont.name
                     font.bold: true
-                    font.pixelSize: 16
-                    color: "white"
+                    font.pixelSize: 12
+                    color: "lightGray"
                     text: "Username"
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -253,7 +112,7 @@ Rectangle {
                     font: textFont.name
                     color: "#25000000"
                     borderColor: "transparent"
-                    textColor: "white"
+                    textColor: "lightGray"
 
                     Keys.onPressed: {
                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
@@ -285,8 +144,8 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     font.family: textFont.name
                     font.bold: true
-                    font.pixelSize: 16
-                    color: "white"
+                    font.pixelSize: 12
+                    color: "lightGray"
                 }
 
                 PasswordBox {
@@ -300,7 +159,7 @@ Rectangle {
                     anchors.left: password_label.right
                     anchors.leftMargin: config.passwordLeftMargin
                     borderColor: "transparent"
-                    textColor: "white"
+                    textColor: "lightGray"
                     tooltipBG: "#25000000"
                     tooltipFG: "#dc322f"
                     image: "components/resources/warning_red.png"
@@ -361,7 +220,7 @@ Rectangle {
                     disabledColor: "#dc322f"
                     activeColor: "#268bd2"
                     pressedColor: "#2aa198"
-                    textColor: "white"
+                    textColor: "lightGray"
                     font: textFont.name
 
                     onClicked: sddm.login(username_input_box.text, password_input_box.text, session.index)
@@ -375,7 +234,7 @@ Rectangle {
                     height: parent.height
                     font.family: textFont.name
                     font.pixelSize: 12
-                    color: "white"
+                    color: "lightGray"
                     anchors.top: password_input_box.bottom
                     anchors.left: password_input_box.left
                     anchors.leftMargin: 0
@@ -495,30 +354,13 @@ Rectangle {
     }
 
     Component.onCompleted: {
+        image1.source = config.background_img_day
+				actionBar.visible =false
         // Set Focus
-        /* if (username_input_box.text == "") */
-        /*     username_input_box.focus = true */
-        /* else */
-        /*     password_input_box.focus = true */
-
-        video1.focus = true
-
-        // load and randomize playlist
-        var time = parseInt(new Date().toLocaleTimeString(Qt.locale(),'h'))
-        if ( time >= 5 && time <= 17 ) {
-            playlist1.load(Qt.resolvedUrl(config.background_vid_day), 'm3u')
-            playlist2.load(Qt.resolvedUrl(config.background_vid_day), 'm3u')
-            image1.source = config.background_img_day
-        } else {
-            playlist1.load(Qt.resolvedUrl(config.background_vid_night), 'm3u')
-            playlist2.load(Qt.resolvedUrl(config.background_vid_night), 'm3u')
-            image1.source = config.background_img_night
-        }
-
-        for (var k = 0; k < Math.ceil(Math.random() * 10) ; k++) {
-            playlist1.shuffle()
-            playlist2.shuffle()
-        }
+         if (username_input_box.text == "") 
+              username_input_box.focus = true 
+         else 
+             password_input_box.focus = true
 
         if (config.showLoginButton == "false") {
             login_button.visible = false
