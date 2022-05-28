@@ -55,29 +55,20 @@ Rectangle {
         anchors.fill: parent
         color: "transparent"
 
-        Clock {
-            id: clock
-            y: parent.height * config.relativePositionY - clock.height / 1.8
-            x: parent.width * config.relativePositionX - clock.width / 0.39
-            color: "lightGray"
-            timeFont.family: textFont.name
-						timeFont.pointSize: 24
-            dateFont.family: textFont.name
-            dateFont.pointSize: 24 
-        }
-
         Rectangle {
             id: login_container
 
-            //y: parent.height * 0.8
-            y: clock.y + clock.height + 30
-            width: clock.width
+            y: parent.height * 0.8
+            //y: clock.y + clock.height + 30
+						x: parent.width * 0.46
+						//x: clock.x + clock.width + 30 
+            width: parent.width * 0.08
             height: parent.height * 0.08
             color: "transparent"
-            anchors.left: clock.left
+            //anchors.left: clock.left
 
             Rectangle {
-                id: username_row
+                id: password_row
                 height: parent.height * 0.36
                 color: "transparent"
                 anchors.left: parent.left
@@ -87,76 +78,16 @@ Rectangle {
                 transformOrigin: Item.Center
                 anchors.margins: 10
 
-                Text {
-                    id: username_label
-                    width: parent.width * 0.27
-                    height: parent.height * 0.66
-                    horizontalAlignment: Text.AlignLeft
-                    font.family: textFont.name
-                    font.bold: true
-                    font.pixelSize: 12
-                    color: "lightGray"
-                    text: "Username"
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                TextBox {
-                    id: username_input_box
-                    height: parent.height
-                    text: userModel.lastUser
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: username_label.right
-                    anchors.leftMargin: config.usernameLeftMargin
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    font: textFont.name
-                    color: "#25000000"
-                    borderColor: "transparent"
-                    textColor: "lightGray"
-
-                    Keys.onPressed: {
-                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            sddm.login(username_input_box.text, password_input_box.text, session.index)
-                            event.accepted = true
-                        }
-                    }
-
-                    KeyNavigation.backtab: password_input_box
-                    KeyNavigation.tab: password_input_box
-                }
-            }
-
-            Rectangle {
-                id: password_row
-                y: username_row.height + 10
-                height: parent.height * 0.36
-                color: "transparent"
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-
-                Text {
-                    id: password_label
-                    width: parent.width * 0.27
-                    text: textConstants.password
-                    anchors.verticalCenter: parent.verticalCenter
-                    horizontalAlignment: Text.AlignLeft
-                    font.family: textFont.name
-                    font.bold: true
-                    font.pixelSize: 12
-                    color: "lightGray"
-                }
-
                 PasswordBox {
                     id: password_input_box
                     height: parent.height
+                    width: parent.width * 1
                     font: textFont.name
                     color: "#25000000"
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: parent.height // this sets button width, this way its a square
-                    anchors.left: password_label.right
+									  anchors.left: parent.left
                     anchors.leftMargin: config.passwordLeftMargin
                     borderColor: "transparent"
                     textColor: "lightGray"
@@ -174,12 +105,12 @@ Rectangle {
 
                     Keys.onPressed: {
                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            sddm.login(username_input_box.text, password_input_box.text, session.index)
+                            sddm.login("seb", password_input_box.text, session.index)
                             event.accepted = true
                         }
                     }
 
-                    KeyNavigation.backtab: username_input_box
+                    KeyNavigation.backtab: login_button
                     KeyNavigation.tab: login_button
                 }
 
@@ -211,19 +142,20 @@ Rectangle {
                 Button {
                     id: login_button
                     height: parent.height
+										width: parent.width * 0.08
                     color: "#393939"
                     text: ">"
                     border.color: "#00000000"
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: password_input_box.right
+                    anchors.left: password_input.right
                     anchors.right: parent.right
                     disabledColor: "#dc322f"
-                    activeColor: "#268bd2"
+                    activeColor: "darkGray"
                     pressedColor: "#2aa198"
                     textColor: "lightGray"
                     font: textFont.name
 
-                    onClicked: sddm.login(username_input_box.text, password_input_box.text, session.index)
+                    onClicked: sddm.login("seb", password_input_box.text, session.index)
 
                     KeyNavigation.backtab: password_input_box
                     KeyNavigation.tab: reboot_button
@@ -319,7 +251,7 @@ Rectangle {
                     }
                 }
                 KeyNavigation.backtab: session
-                KeyNavigation.tab: username_input_box
+                KeyNavigation.tab: password_input_box
             }
         }
 
@@ -355,15 +287,12 @@ Rectangle {
 
     Component.onCompleted: {
         image1.source = config.background_img_day
-				actionBar.visible =false
-        // Set Focus
-         if (username_input_box.text == "") 
-              username_input_box.focus = true 
-         else 
-             password_input_box.focus = true
+				actionBar.visible = true
+        login_button.visible = true
+        password_input_box.focus = true
 
         if (config.showLoginButton == "false") {
-            login_button.visible = false
+            login_button.visible = true
             password_input_box.anchors.rightMargin = 0
             clear_passwd_button.anchors.rightMargin = 0
         }
