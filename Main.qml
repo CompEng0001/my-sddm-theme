@@ -7,6 +7,7 @@ import "components"
 Rectangle {
     // Main Container
     id: container
+		property string user: "seb"
 
     LayoutMirroring.enabled: Qt.locale().textDirection == Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
@@ -105,7 +106,7 @@ Rectangle {
 
                     Keys.onPressed: {
                         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                            sddm.login("seb", password_input_box.text, session.index)
+                            sddm.login(user, password_input_box.text, session.index)
                             event.accepted = true
                         }
                     }
@@ -147,7 +148,7 @@ Rectangle {
                     text: ">"
                     border.color: "#00000000"
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: password_input.right
+                    anchors.left: password_input_box.right
                     anchors.right: parent.right
                     disabledColor: "#dc322f"
                     activeColor: "darkGray"
@@ -155,7 +156,7 @@ Rectangle {
                     textColor: "lightGray"
                     font: textFont.name
 
-                    onClicked: sddm.login("seb", password_input_box.text, session.index)
+                    onClicked: sddm.login(user, password_input_box.text, session.index)
 
                     KeyNavigation.backtab: password_input_box
                     KeyNavigation.tab: reboot_button
